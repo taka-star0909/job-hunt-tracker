@@ -80,6 +80,14 @@
       "memo": "",
       "nextAction": "",
       "activities": []
+    },
+    {
+      "id": "id_q9e1mtkmmsd1dddo",
+      "name": "アンドパッド",
+      "status": "未接触",
+      "memo": "",
+      "nextAction": "",
+      "activities": []
     }
   ],
   "agents": [
