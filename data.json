@@ -72,6 +72,14 @@
           "desc": "コンサル部門神田さんとカジュアル面談"
         }
       ]
+    },
+    {
+      "id": "id_1oi4dqcumsd1d97v",
+      "name": "ログラス",
+      "status": "未接触",
+      "memo": "",
+      "nextAction": "",
+      "activities": []
     }
   ],
   "agents": [
