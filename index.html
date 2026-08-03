@@ -224,6 +224,48 @@
     font-size: 13px;
   }
 
+  ul.tasks {
+    list-style: none;
+    margin: 8px 0 0;
+    padding: 0;
+  }
+  ul.tasks li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 5px 0;
+    font-size: 13px;
+  }
+  ul.tasks li .task-check {
+    width: 18px;
+    height: 18px;
+    border-radius: 5px;
+    border: 1.5px solid var(--border);
+    background: white;
+    cursor: pointer;
+    flex-shrink: 0;
+    padding: 0;
+    line-height: 1;
+    color: transparent;
+    font-size: 12px;
+  }
+  ul.tasks li .task-check:hover {
+    border-color: var(--ok);
+    color: var(--ok);
+  }
+  .task-add-row {
+    display: flex;
+    gap: 6px;
+    margin-top: 6px;
+  }
+  .task-add-row input[type=text] {
+    flex: 1;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 6px 8px;
+    font-size: 13px;
+  }
+
   .timeline-item {
     display: flex;
     gap: 12px;
@@ -455,12 +497,21 @@ function cid() {
   return 'id_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36);
 }
 
+function ensureTasks(d) {
+  d.companies.concat(d.agents).forEach(function (e) {
+    if (!e.tasks) {
+      e.tasks = (e.nextAction && e.nextAction.trim()) ? [{ id: cid(), text: e.nextAction.trim() }] : [];
+    }
+  });
+  return d;
+}
+
 function loadLocalData() {
   const raw = localStorage.getItem(STORAGE_KEY);
   if (raw) {
-    try { return JSON.parse(raw); } catch (e) { /* fall through */ }
+    try { return ensureTasks(JSON.parse(raw)); } catch (e) { /* fall through */ }
   }
-  return seedData();
+  return ensureTasks(seedData());
 }
 
 let data = loadLocalData();
@@ -505,6 +556,16 @@ function renderActivities(entity) {
   }).join('') + '</ul>';
 }
 
+function renderTasks(entity) {
+  const tasks = entity.tasks || [];
+  if (tasks.length === 0) {
+    return '<div class="empty" style="padding:4px 0;">タスクなし</div>';
+  }
+  return '<ul class="tasks">' + tasks.map(function (t) {
+    return '<li><button class="task-check" title="完了にする" onclick="completeTask(\'' + entity.id + '\',\'' + t.id + '\')">✓</button><span>' + escapeHtml(t.text) + '</span></li>';
+  }).join('') + '</ul>';
+}
+
 function renderCard(entity) {
   return '<div class="card">' +
     '<div class="card-head">' +
@@ -517,8 +578,12 @@ function renderCard(entity) {
       '</div>' +
     '</div>' +
     '<div class="field-row">' +
-      '<label>次のアクション</label>' +
-      '<input type="text" value="' + escapeHtml(entity.nextAction) + '" placeholder="例）来週オファー面談の日程調整" onchange="setField(\'' + entity.id + '\',\'nextAction\', this.value)" onkeydown="if(event.key===\'Enter\'){event.preventDefault();this.blur();}">' +
+      '<label>次のアクション（タスク）</label>' +
+      renderTasks(entity) +
+      '<div class="task-add-row">' +
+        '<input type="text" id="task-input-' + entity.id + '" placeholder="新しいタスクを追加" onkeydown="if(event.key===\'Enter\'){event.preventDefault();addTask(\'' + entity.id + '\');}">' +
+        '<button class="btn small" onclick="addTask(\'' + entity.id + '\')">追加</button>' +
+      '</div>' +
     '</div>' +
     '<div class="field-row">' +
       '<label>メモ</label>' +
@@ -595,6 +660,25 @@ function setField(id, field, value) {
   const e = findEntity(id);
   if (e) { e[field] = value; persistAndSync(); }
 }
+function addTask(id) {
+  const input = document.getElementById('task-input-' + id);
+  const text = input.value.trim();
+  if (!text) return;
+  const e = findEntity(id);
+  if (e) {
+    if (!e.tasks) e.tasks = [];
+    e.tasks.push({ id: cid(), text: text });
+    persistAndSync();
+    renderAll();
+  }
+}
+function completeTask(id, taskId) {
+  const e = findEntity(id);
+  if (!e || !e.tasks) return;
+  e.tasks = e.tasks.filter(function (t) { return t.id !== taskId; });
+  persistAndSync();
+  renderAll();
+}
 function addActivity(id) {
   const dateInput = document.getElementById('date-' + id);
   const descInput = document.getElementById('desc-' + id);
@@ -651,7 +735,7 @@ function importData(event) {
     try {
       const parsed = JSON.parse(e.target.result);
       if (!parsed.companies || !parsed.agents) throw new Error('invalid format');
-      data = parsed;
+      data = ensureTasks(parsed);
       persistAndSync();
       renderAll();
       alert('インポートしました');
@@ -727,7 +811,7 @@ async function pullFromGitHub(silent) {
     const decoded = b64DecodeUnicode(json.content);
     const parsed = JSON.parse(decoded);
     if (parsed.companies && parsed.agents) {
-      data = parsed;
+      data = ensureTasks(parsed);
       saveLocal();
       renderAll();
     }
