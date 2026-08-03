@@ -35,7 +35,12 @@
           "desc": "HR髙野さんとカジュアル面談"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_evvc6sermsd22xhb",
+          "text": "前回の結果を確認して髙野さんに次に進みたい旨伝える"
+        }
+      ]
     },
     {
       "id": "id_rfr0atsnmsd0bu8e",
