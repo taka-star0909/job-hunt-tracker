@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>転職活動管理アプリ</title>
+<style>
+  :root {
+    --bg: #f5f6f8;
+    --card: #ffffff;
+    --text: #1f2430;
+    --sub: #6b7280;
+    --accent: #4f46e5;
+    --accent-light: #eef2ff;
+    --border: #e5e7eb;
+    --danger: #ef4444;
+    --ok: #22c55e;
+    --warn: #f59e0b;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Hiragino Kaku Gothic ProN", "Segoe UI", sans-serif;
+    background: var(--bg);
+    color: var(--text);
+  }
+  header {
+    padding: 24px 32px 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  header h1 { margin: 0 0 4px; font-size: 22px; }
+  header p { margin: 0; color: var(--sub); font-size: 13px; }
+  .sync-box { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--sub); }
+  .sync-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--sub); display: inline-block; }
+  .sync-dot.ok { background: var(--ok); }
+  .sync-dot.warn { background: var(--warn); }
+  .sync-dot.err { background: var(--danger); }
+  .summary { display: flex; gap: 12px; padding: 8px 32px 16px; flex-wrap: wrap; }
+  .summary .stat { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 10px 16px; min-width: 100px; text-align: center; }
+  .summary .stat .num { font-size: 20px; font-weight: 700; color: var(--accent); }
+  .summary .stat .label { font-size: 11px; color: var(--sub); margin-top: 2px; }
+  nav.tabs { display: flex; gap: 4px; padding: 0 32px; border-bottom: 1px solid var(--border); }
+  nav.tabs button { border: none; background: none; padding: 10px 16px; font-size: 14px; color: var(--sub); cursor: pointer; border-bottom: 2px solid transparent; }
+  nav.tabs button.active { color: var(--accent); border-bottom-color: var(--accent); font-weight: 600; }
+  main { padding: 20px 32px 60px; max-width: 900px; }
+  .view { display: none; }
+  .view.active { display: block; }
+  .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .btn { border: none; background: var(--accent); color: white; padding: 8px 14px; border-radius: 8px; font-size: 13px; cursor: pointer; }
+  .btn.secondary { background: var(--accent-light); color: var(--accent); }
+  .btn.ghost { background: none; color: var(--sub); border: 1px solid var(--border); }
+  .btn.small { padding: 4px 10px; font-size: 12px; }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; margin-bottom: 14px; }
+  .card-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
+  .card-head .name { font-size: 16px; font-weight: 700; }
+  .badge { display: inline-block; font-size: 11px; padding: 3px 10px; border-radius: 999px; font-weight: 600; white-space: nowrap; }
+  .card-actions { display: flex; gap: 6px; align-items: center; }
+  select.status-select { font-size: 12px; padding: 4px 8px; border-radius: 8px; border: 1px solid var(--border); background: white; }
+  .field-row { margin-top: 8px; font-size: 13px; }
+  .field-row label { color: var(--sub); margin-right: 6px; }
+  .field-row input[type=text] { width: 100%; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 13px; margin-top: 4px; }
+  ul.activities { list-style: none; margin: 10px 0 0; padding: 0; border-top: 1px dashed var(--border); padding-top: 8px; }
+  ul.activities li { display: flex; gap: 10px; padding: 4px 0; font-size: 13px; }
+  ul.activities li .date { color: var(--sub); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  ul.activities li .del-act { margin-left: auto; color: var(--sub); cursor: pointer; font-size: 12px; }
+  .add-activity-row { display: flex; gap: 6px; margin-top: 10px; }
+  .add-activity-row input[type=date] { border: 1px solid var(--border); border-radius: 6px; padding: 6px; font-size: 12px; }
+  .add-activity-row input[type=text] { flex: 1; border: 1px solid var(--border); border-radius: 6px; padding: 6px 8px; font-size: 13px; }
+  .timeline-item { display: flex; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .timeline-item .date { width: 90px; color: var(--sub); flex-shrink: 0; }
+  .timeline-item .tag { font-weight: 600; margin-right: 6px; }
+  .empty { color: var(--sub); font-size: 13px; text-align: center; padding: 30px 0; }
+  footer.actions { display: flex; gap: 8px; padding: 0 32px 24px; }
+  .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.35); align-items: center; justify-content: center; z-index: 50; }
+  .modal-overlay.open { display: flex; }
+  .modal { background: white; border-radius: 14px; padding: 22px 24px; width: 90%; max-width: 420px; }
+  .modal h2 { margin: 0 0 4px; font-size: 16px; }
+  .modal p.hint { margin: 0 0 14px; font-size: 12px; color: var(--sub); line-height: 1.5; }
+  .modal label { display: block; font-size: 12px; color: var(--sub); margin: 10px 0 4px; }
+  .modal input { width: 100%; border: 1px solid var(--border); border-radius: 8px; padding: 8px 10px; font-size: 13px; }
+  .modal .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 18px; }
+  #settings-msg { font-size: 12px; margin-top: 10px; min-height: 16px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div>
+    <h1>転職活動 管理アプリ</h1>
+    <p>候補企業とエージェントの面談・選考状況をまとめて管理</p>
+  </div>
+  <div class="sync-box">
+    <span class="sync-dot" id="sync-dot"></span>
+    <span id="sync-text">未設定（ローカルのみ）</span>
+    <button class="btn ghost small" id="open-settings">同期設定</button>
+  </div>
+</header>
+
+<div class="summary" id="summary"></div>
+
+<nav class="tabs">
+  <button data-tab="companies" class="active">候補企業</button>
+  <button data-tab="agents">転職エージェント</button>
+  <button data-tab="timeline">全体タイムライン</button>
+</nav>
+
+<main>
+  <div class="view active" id="view-companies">
+    <div class="toolbar">
+      <span></span>
+      <button class="btn" onclick="addEntity('company')">＋ 企業を追加</button>
+    </div>
+    <div id="companies-list"></div>
+  </div>
+
+  <div class="view" id="view-agents">
+    <div class="toolbar">
+      <span></span>
+      <button class="btn" onclick="addEntity('agent')">＋ エージェントを追加</button>
+    </div>
+    <div id="agents-list"></div>
+  </div>
+
+  <div class="view" id="view-timeline">
+    <div id="timeline-list"></div>
+  </div>
+</main>
+
+<footer class="actions">
+  <button class="btn ghost small" onclick="exportData()">JSONエクスポート</button>
+  <label class="btn ghost small" style="cursor:pointer;">
+    JSONインポート
+    <input type="file" accept="application/json" style="display:none" onchange="importData(event)">
+  </label>
+</footer>
+
+<div class="modal-overlay" id="settings-overlay">
+  <div class="modal">
+    <h2>GitHub同期の設定</h2>
+    <p class="hint">全端末（Mac / iPad / iPhone）で同じデータを見るための設定。GitHubリポジトリのowner・repo名と、Contents: Read and write権限のPersonal Access Tokenを入力。トークンはこの端末のブラウザにのみ保存される。</p>
+    <label>GitHubユーザー名（owner）</label>
+    <input type="text" id="gh-owner" placeholder="例）taka-matsuura">
+    <label>リポジトリ名（repo）</label>
+    <input type="text" id="gh-repo" placeholder="例）job-hunt-tracker">
+    <label>データファイル名（path）</label>
+    <input type="text" id="gh-path" placeholder="data.json" value="data.json">
+    <label>Personal Access Token</label>
+    <input type="password" id="gh-token" placeholder="github_pat_...">
+    <div id="settings-msg"></div>
+    <div class="modal-actions">
+      <button class="btn ghost small" id="settings-cancel">閉じる</button>
+      <button class="btn small" id="settings-save">保存して同期</button>
+    </div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'job_hunt_tracker_v1';
+const CONFIG_KEY = 'job_hunt_gh_config_v1';
+
+const STATUS_OPTIONS = ['未接触','カジュアル面談','一次面接','二次面接','最終面接','オファー','辞退','不合格','保留'];
+const STATUS_COLORS = {
+  '未接触': '#9ca3af',
+  'カジュアル面談': '#3b82f6',
+  '一次面接': '#6366f1',
+  '二次面接': '#8b5cf6',
+  '最終面接': '#ec4899',
+  'オファー': '#22c55e',
+  '辞退': '#f97316',
+  '不合格': '#ef4444',
+  '保留': '#eab308'
+};
+
+function seedData() {
+  return {
+    companies: [
+      { id: cid(), name: 'AWS', status: 'カジュアル面談', memo: '', nextAction: '', activities: [
+        { date: '2026-07-13', desc: 'HR松山さんとカジュアル面談' },
+        { date: '2026-07-22', desc: '営業ネットワーキングイベント参加' }
+      ]},
+      { id: cid(), name: 'Salesforce', status: 'カジュアル面談', memo: '', nextAction: '', activities: [
+        { date: '2026-07-23', desc: 'HR髙野さんとカジュアル面談' }
+      ]},
+      { id: cid(), name: 'ACES', status: '一次面接', memo: '', nextAction: '', activities: [
+        { date: '2026-06-29', desc: '社長野田村さんとカジュアル面談' },
+        { date: '2026-07-17', desc: 'コンサル部門阿部さんと一次面談＋HR濱田さんと面談' }
+      ]},
+      { id: cid(), name: 'Secondz Digital', status: 'カジュアル面談', memo: '', nextAction: '', activities: [
+        { date: '2026-07-16', desc: 'COO中村さんとカジュアル面談' }
+      ]}
+    ],
+    agents: [
+      { id: cid(), name: 'A. Capital（長谷川さん）', status: 'カジュアル面談', memo: '', nextAction: '', activities: [
+        { date: '2026-06-25', desc: 'カジュアル面談' }
+      ]},
+      { id: cid(), name: 'One Work（古閑さん）', status: 'カジュアル面談', memo: '', nextAction: '', activities: [
+        { date: '2026-06-28', desc: 'カジュアル面談' },
+        { date: '2026-07-03', desc: 'カジュアル面談' }
+      ]},
+      { id: cid(), name: 'for Startups（薮田さん）', status: 'カジュアル面談', memo: '', nextAction: '', activities: [
+        { date: '2026-07-01', desc: 'カジュアル面談' },
+        { date: '2026-07-06', desc: 'カジュアル面談' }
+      ]}
+    ]
+  };
+}
+
+function cid() { return 'id_' + Math.random().toString(36).slice(2, 10) + Date.now().toString(36); }
+
+function loadLocalData() {
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if (raw) { try { return JSON.parse(raw); } catch (e) {} }
+  return seedData();
+}
+
+let data = loadLocalData();
+let remoteSha = null;
+let syncTimer = null;
+
+function saveLocal() { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+
+function escapeHtml(str) {
+  return (str || '').replace(/[&<>"']/g, function (c) {
+    return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+  });
+}
+
+function findEntity(id) {
+  return data.companies.find(function (e) { return e.id === id; }) ||
+         data.agents.find(function (e) { return e.id === id; });
+}
+
+function statusBadge(status) {
+  const color = STATUS_COLORS[status] || '#9ca3af';
+  return '<span class="badge" style="background:' + color + '22; color:' + color + ';">' + escapeHtml(status) + '</span>';
+}
+
+function statusSelect(entity) {
+  let opts = STATUS_OPTIONS.map(function (s) {
+    return '<option value="' + s + '"' + (s === entity.status ? ' selected' : '') + '>' + s + '</option>';
+  }).join('');
+  return '<select class="status-select" onchange="setStatus(\'' + entity.id + '\', this.value)">' + opts + '</select>';
+}
+
+function renderActivities(entity) {
+  const sorted = entity.activities.slice().sort(function (a, b) { return b.date.localeCompare(a.date); });
+  if (sorted.length === 0) return '<div class="empty" style="padding:8px 0;">活動記録なし</div>';
+  return '<ul class="activities">' + sorted.map(function (a) {
+    return '<li><span class="date">' + escapeHtml(a.date) + '</span><span>' + escapeHtml(a.desc) + '</span>' +
+      '<span class="del-act" onclick="deleteActivity(\'' + entity.id + '\', \'' + a.date + '\', \'' + a.desc.replace(/'/g, "\\'") + '\')">削除</span></li>';
+  }).join('') + '</ul>';
+}
+
+function renderCard(entity) {
+  return '<div class="card">' +
+    '<div class="card-head"><div><div class="name">' + escapeHtml(entity.name) + ' ' + statusBadge(entity.status) + '</div></div>' +
+    '<div class="card-actions">' + statusSelect(entity) +
+    '<button class="btn ghost small" onclick="deleteEntity(\'' + entity.id + '\')">削除</button></div></div>' +
+    '<div class="field-row"><label>次のアクション</label>' +
+    '<input type="text" value="' + escapeHtml(entity.nextAction) + '" placeholder="例）来週オファー面談の日程調整" onchange="setField(\'' + entity.id + '\',\'nextAction\', this.value)"></div>' +
+    '<div class="field-row"><label>メモ</label>' +
+    '<input type="text" value="' + escapeHtml(entity.memo) + '" placeholder="役職、年収レンジなど自由記入" onchange="setField(\'' + entity.id + '\',\'memo\', this.value)"></div>' +
+    renderActivities(entity) +
+    '<div class="add-activity-row"><input type="date" id="date-' + entity.id + '">' +
+    '<input type="text" id="desc-' + entity.id + '" placeholder="活動内容（例：二次面接）">' +
+    '<button class="btn small" onclick="addActivity(\'' + entity.id + '\')">追加</button></div></div>';
+}
+
+function renderList(list, containerId, emptyMsg) {
+  const el = document.getElementById(containerId);
+  if (list.length === 0) { el.innerHTML = '<div class="empty">' + emptyMsg + '</div>'; return; }
+  el.innerHTML = list.map(renderCard).join('');
+}
+
+function renderSummary() {
+  const el = document.getElementById('summary');
+  const activeStatuses = ['カジュアル面談', '一次面接', '二次面接', '最終面接'];
+  const inProgress = data.companies.filter(function (c) { return activeStatuses.indexOf(c.status) !== -1; }).length;
+  const offers = data.companies.filter(function (c) { return c.status === 'オファー'; }).length;
+  el.innerHTML = stat(data.companies.length, '候補企業') + stat(inProgress, '進行中') + stat(offers, 'オファー') + stat(data.agents.length, 'エージェント');
+}
+function stat(num, label) { return '<div class="stat"><div class="num">' + num + '</div><div class="label">' + label + '</div></div>'; }
+
+function renderTimeline() {
+  const items = [];
+  data.companies.concat(data.agents).forEach(function (e) {
+    e.activities.forEach(function (a) { items.push({ date: a.date, desc: a.desc, name: e.name }); });
+  });
+  items.sort(function (a, b) { return b.date.localeCompare(a.date); });
+  const el = document.getElementById('timeline-list');
+  if (items.length === 0) { el.innerHTML = '<div class="empty">まだ活動記録がありません</div>'; return; }
+  el.innerHTML = items.map(function (i) {
+    return '<div class="timeline-item"><span class="date">' + escapeHtml(i.date) + '</span><div><span class="tag">' + escapeHtml(i.name) + '</span>' + escapeHtml(i.desc) + '</div></div>';
+  }).join('');
+}
+
+function renderAll() {
+  renderSummary();
+  renderList(data.companies, 'companies-list', 'まだ企業がありません。「＋ 企業を追加」から登録できます。');
+  renderList(data.agents, 'agents-list', 'まだエージェントがありません。「＋ エージェントを追加」から登録できます。');
+  renderTimeline();
+}
+
+function persistAndSync() { saveLocal(); scheduleSync(); }
+
+function setStatus(id, status) { const e = findEntity(id); if (e) { e.status = status; persistAndSync(); renderAll(); } }
+function setField(id, field, value) { const e = findEntity(id); if (e) { e[field] = value; persistAndSync(); } }
+function addActivity(id) {
+  const dateInput = document.getElementById('date-' + id);
+  const descInput = document.getElementById('desc-' + id);
+  const date = dateInput.value; const desc = descInput.value.trim();
+  if (!date || !desc) { alert('日付と内容を入力してください'); return; }
+  const e = findEntity(id);
+  if (e) { e.activities.push({ date: date, desc: desc }); persistAndSync(); renderAll(); }
+}
+function deleteActivity(id, date, desc) {
+  const e = findEntity(id); if (!e) return;
+  const idx = e.activities.findIndex(function (a) { return a.date === date && a.desc === desc; });
+  if (idx !== -1) { e.activities.splice(idx, 1); persistAndSync(); renderAll(); }
+}
+function deleteEntity(id) {
+  if (!confirm('この項目を削除しますか？')) return;
+  data.companies = data.companies.filter(function (e) { return e.id !== id; });
+  data.agents = data.agents.filter(function (e) { return e.id !== id; });
+  persistAndSync(); renderAll();
+}
+function addEntity(type) {
+  const name = prompt(type === 'company' ? '企業名を入力してください' : 'エージェント名（担当者）を入力してください');
+  if (!name || !name.trim()) return;
+  const entity = { id: cid(), name: name.trim(), status: '未接触', memo: '', nextAction: '', activities: [] };
+  if (type === 'company') { data.companies.push(entity); } else { data.agents.push(entity); }
+  persistAndSync(); renderAll();
+}
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = '転職活動管理_backup_' + new Date().toISOString().slice(0, 10) + '.json';
+  a.click(); URL.revokeObjectURL(url);
+}
+function importData(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function (e) {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (!parsed.companies || !parsed.agents) throw new Error('invalid format');
+      data = parsed; persistAndSync(); renderAll(); alert('インポートしました');
+    } catch (err) { alert('読み込みに失敗しました。ファイル形式を確認してください。'); }
+  };
+  reader.readAsText(file);
+}
+
+document.querySelectorAll('nav.tabs button').forEach(function (btn) {
+  btn.addEventListener('click', function () {
+    document.querySelectorAll('nav.tabs button').forEach(function (b) { b.classList.remove('active'); });
+    document.querySelectorAll('.view').forEach(function (v) { v.classList.remove('active'); });
+    btn.classList.add('active');
+    document.getElementById('view-' + btn.dataset.tab).classList.add('active');
+  });
+});
+
+function getConfig() {
+  const raw = localStorage.getItem(CONFIG_KEY); if (!raw) return null;
+  try { const cfg = JSON.parse(raw); if (cfg.owner && cfg.repo && cfg.path && cfg.token) return cfg; } catch (e) {}
+  return null;
+}
+function saveConfig(cfg) { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
+
+function b64EncodeUnicode(str) {
+  return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function (match, p1) { return String.fromCharCode('0x' + p1); }));
+}
+function b64DecodeUnicode(str) {
+  return decodeURIComponent(atob(str.replace(/\n/g, '')).split('').map(function (c) {
+    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+  }).join(''));
+}
+
+function ghUrl(cfg) { return 'https://api.github.com/repos/' + cfg.owner + '/' + cfg.repo + '/contents/' + cfg.path; }
+
+function setSyncStatus(state, text) {
+  const dot = document.getElementById('sync-dot'); const label = document.getElementById('sync-text');
+  dot.className = 'sync-dot' + (state ? ' ' + state : ''); label.textContent = text;
+}
+
+async function pullFromGitHub(silent) {
+  const cfg = getConfig(); if (!cfg) { setSyncStatus('', '未設定（ローカルのみ）'); return; }
+  setSyncStatus('warn', '同期中...');
+  try {
+    const res = await fetch(ghUrl(cfg), { headers: { 'Authorization': 'token ' + cfg.token, 'Accept': 'application/vnd.github+json' } });
+    if (res.status === 404) { remoteSha = null; setSyncStatus('warn', 'リモートに未作成。保存すると作成されます'); return; }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    remoteSha = json.sha;
+    const decoded = b64DecodeUnicode(json.content);
+    const parsed = JSON.parse(decoded);
+    if (parsed.companies && parsed.agents) { data = parsed; saveLocal(); renderAll(); }
+    setSyncStatus('ok', '同期済み（' + new Date().toLocaleTimeString('ja-JP') + '）');
+  } catch (err) { setSyncStatus('err', '同期エラー：ローカルのデータを表示中'); }
+}
+
+function scheduleSync() {
+  const cfg = getConfig(); if (!cfg) return;
+  if (syncTimer) clearTimeout(syncTimer);
+  syncTimer = setTimeout(pushToGitHub, 800);
+}
+
+async function pushToGitHub() {
+  const cfg = getConfig(); if (!cfg) return;
+  setSyncStatus('warn', '同期中...');
+  try {
+    const body = { message: '転職活動データ更新 ' + new Date().toISOString(), content: b64EncodeUnicode(JSON.stringify(data, null, 2)) };
+    if (remoteSha) body.sha = remoteSha;
+    const res = await fetch(ghUrl(cfg), {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + cfg.token, 'Accept': 'application/vnd.github+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (res.status === 409) { await pullFromGitHub(true); setSyncStatus('warn', '他端末の変更を検知。最新データを取り込みました。編集し直してください'); return; }
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const json = await res.json();
+    remoteSha = json.content.sha;
+    setSyncStatus('ok', '同期済み（' + new Date().toLocaleTimeString('ja-JP') + '）');
+  } catch (err) { setSyncStatus('err', '同期エラー：ローカルには保存済み'); }
+}
+
+document.getElementById('open-settings').addEventListener('click', function () {
+  const cfg = getConfig() || {};
+  document.getElementById('gh-owner').value = cfg.owner || '';
+  document.getElementById('gh-repo').value = cfg.repo || '';
+  document.getElementById('gh-path').value = cfg.path || 'data.json';
+  document.getElementById('gh-token').value = cfg.token || '';
+  document.getElementById('settings-msg').textContent = '';
+  document.getElementById('settings-overlay').classList.add('open');
+});
+document.getElementById('settings-cancel').addEventListener('click', function () {
+  document.getElementById('settings-overlay').classList.remove('open');
+});
+document.getElementById('settings-save').addEventListener('click', async function () {
+  const owner = document.getElementById('gh-owner').value.trim();
+  const repo = document.getElementById('gh-repo').value.trim();
+  const path = document.getElementById('gh-path').value.trim() || 'data.json';
+  const token = document.getElementById('gh-token').value.trim();
+  if (!owner || !repo || !token) {
+    document.getElementById('settings-msg').textContent = '全項目を入力してください';
+    document.getElementById('settings-msg').style.color = 'var(--danger)';
+    return;
+  }
+  saveConfig({ owner: owner, repo: repo, path: path, token: token });
+  document.getElementById('settings-msg').textContent = '保存しました。接続確認中...';
+  document.getElementById('settings-msg').style.color = 'var(--sub)';
+  await pullFromGitHub();
+  await pushToGitHub();
+  document.getElementById('settings-msg').textContent = '完了！このパネルを閉じてOK';
+  document.getElementById('settings-msg').style.color = 'var(--ok)';
+});
+
+renderAll();
+if (getConfig()) { pullFromGitHub(); } else { setSyncStatus('', '未設定（ローカルのみ）'); }
+</script>
+</body>
+</html>
