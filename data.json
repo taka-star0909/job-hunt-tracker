@@ -140,6 +140,14 @@
           "text": "事前共有リンクを面談までに読んでおく。"
         }
       ]
+    },
+    {
+      "id": "id_e6pxx0r4msd2ikjy",
+      "name": "WIL",
+      "status": "未接触",
+      "memo": "",
+      "nextAction": "",
+      "activities": []
     }
   ],
   "agents": [
