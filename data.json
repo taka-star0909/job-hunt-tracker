@@ -115,7 +115,12 @@
           "desc": "金井さん"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_t1rtvqybmsd24tc5",
+          "text": "事前送付資料を面談までに読んでおく。"
+        }
+      ]
     },
     {
       "id": "id_q9e1mtkmmsd1dddo",
