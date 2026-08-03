@@ -92,7 +92,12 @@
       "status": "未接触",
       "memo": "",
       "nextAction": "",
-      "activities": []
+      "activities": [
+        {
+          "date": "2026-08-07",
+          "desc": "コンサルティング業部長"
+        }
+      ]
     }
   ],
   "agents": [
