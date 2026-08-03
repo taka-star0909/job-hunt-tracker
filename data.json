@@ -77,7 +77,12 @@
           "desc": "COO中村さんとカジュアル面談"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_gu7eio5nmsd23qpn",
+          "text": "薮田さんからの連絡を待ち次の日程調整をする。"
+        }
+      ]
     },
     {
       "id": "id_lc9ig0mxmsd1atr4",
