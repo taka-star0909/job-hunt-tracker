@@ -1,0 +1,113 @@
+{
+  "companies": [
+    {
+      "id": "id_7duksr6nmsd0bu8e",
+      "name": "AWS",
+      "status": "カジュアル面談",
+      "memo": "",
+      "nextAction": "",
+      "activities": [
+        {
+          "date": "2026-07-13",
+          "desc": "HR松山さんとカジュアル面談"
+        },
+        {
+          "date": "2026-07-22",
+          "desc": "営業ネットワーキングイベント参加"
+        }
+      ]
+    },
+    {
+      "id": "id_yy5b9qr2msd0bu8e",
+      "name": "Salesforce",
+      "status": "カジュアル面談",
+      "memo": "",
+      "nextAction": "",
+      "activities": [
+        {
+          "date": "2026-07-23",
+          "desc": "HR髙野さんとカジュアル面談"
+        }
+      ]
+    },
+    {
+      "id": "id_rfr0atsnmsd0bu8e",
+      "name": "ACES",
+      "status": "一次面接",
+      "memo": "",
+      "nextAction": "",
+      "activities": [
+        {
+          "date": "2026-06-29",
+          "desc": "社長野田村さんとカジュアル面談"
+        },
+        {
+          "date": "2026-07-17",
+          "desc": "コンサル部門阿部さんと一次面談＋HR濱田さんと面談"
+        }
+      ]
+    },
+    {
+      "id": "id_s2x6cdylmsd0bu8e",
+      "name": "Secondz Digital",
+      "status": "カジュアル面談",
+      "memo": "",
+      "nextAction": "",
+      "activities": [
+        {
+          "date": "2026-07-16",
+          "desc": "COO中村さんとカジュアル面談"
+        }
+      ]
+    }
+  ],
+  "agents": [
+    {
+      "id": "id_mlku8ac0msd0bu8e",
+      "name": "A. Capital（長谷川さん）",
+      "status": "カジュアル面談",
+      "memo": "",
+      "nextAction": "",
+      "activities": [
+        {
+          "date": "2026-06-25",
+          "desc": "カジュアル面談"
+        }
+      ]
+    },
+    {
+      "id": "id_l0hyucl8msd0bu8e",
+      "name": "One Work（古閑さん）",
+      "status": "カジュアル面談",
+      "memo": "",
+      "nextAction": "",
+      "activities": [
+        {
+          "date": "2026-06-28",
+          "desc": "カジュアル面談"
+        },
+        {
+          "date": "2026-07-03",
+          "desc": "カジュアル面談"
+        }
+      ]
+    },
+    {
+      "id": "id_ydr0lxx7msd0bu8e",
+      "name": "for Startups（薮田さん）",
+      "status": "カジュアル面談",
+      "memo": "",
+      "nextAction": "",
+      "activities": [
+        {
+          "date": "2026-07-01",
+          "desc": "カジュアル面談"
+        },
+        {
+          "date": "2026-07-06",
+          "desc": "カジュアル面談"
+        }
+      ]
+    }
+  ]
+}
