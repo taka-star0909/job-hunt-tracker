@@ -68,7 +68,7 @@
     {
       "id": "id_s2x6cdylmsd0bu8e",
       "name": "Secondz Digital",
-      "status": "カジュアル面談",
+      "status": "一次面接",
       "memo": "",
       "nextAction": "",
       "activities": [
@@ -152,7 +152,8 @@
           "date": "2026-08-14",
           "desc": "佐藤さんとカジュアル面談"
         }
-      ]
+      ],
+      "tasks": []
     }
   ],
   "agents": [
