@@ -16,7 +16,12 @@
           "desc": "営業ネットワーキングイベント参加"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_hy4igehomsknkjg8",
+          "text": "面談予定送付"
+        }
+      ]
     },
     {
       "id": "id_yy5b9qr2msd0bu8e",
