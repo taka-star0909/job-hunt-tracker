@@ -154,6 +154,14 @@
         }
       ],
       "tasks": []
+    },
+    {
+      "id": "id_tt11kcbimsknj0c2",
+      "name": "FLUX",
+      "status": "未接触",
+      "memo": "",
+      "nextAction": "",
+      "activities": []
     }
   ],
   "agents": [
