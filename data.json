@@ -135,7 +135,12 @@
           "desc": "コンサルティング事業部長松本さんと面談＋一次面接"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_2uhv9xd1mt3yrckz",
+          "text": "一次面接の結果待ち"
+        }
+      ]
     },
     {
       "id": "id_e6pxx0r4msd2ikjy",
