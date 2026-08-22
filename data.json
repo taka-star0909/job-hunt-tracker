@@ -116,7 +116,12 @@
           "desc": "金井さん"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_rxtwoolhmt3yqxfx",
+          "text": "希望する場合は面接を申し込む"
+        }
+      ]
     },
     {
       "id": "id_q9e1mtkmmsd1dddo",
