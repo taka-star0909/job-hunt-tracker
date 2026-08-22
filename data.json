@@ -97,7 +97,12 @@
           "desc": "コンサル部門神田さんとカジュアル面談"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_w98sgvgvmt3yqrfa",
+          "text": "希望する場合は面接を申し込む"
+        }
+      ]
     },
     {
       "id": "id_1oi4dqcumsd1d97v",
