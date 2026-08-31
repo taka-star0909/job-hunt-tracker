@@ -34,7 +34,12 @@
           "desc": "HR髙野さんとカジュアル面談"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_y34sxukfmth8g9nn",
+          "text": "髙野"
+        }
+      ]
     },
     {
       "id": "id_rfr0atsnmsd0bu8e",
