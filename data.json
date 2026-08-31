@@ -88,7 +88,12 @@
           "desc": "みなとみらい本社にて最終面接"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_yp0zsyq6mth8h4zk",
+          "text": "最終面接結果待ち"
+        }
+      ]
     },
     {
       "id": "id_lc9ig0mxmsd1atr4",
