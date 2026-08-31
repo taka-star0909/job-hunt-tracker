@@ -20,7 +20,12 @@
           "desc": "Phone Screening"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_scfzfy6tmth8hkau",
+          "text": "HR松山さんにお礼メール"
+        }
+      ]
     },
     {
       "id": "id_yy5b9qr2msd0bu8e",
