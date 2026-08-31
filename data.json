@@ -34,7 +34,12 @@
           "desc": "HR髙野さんとカジュアル面談"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_isadyi44mth8gk0v",
+          "text": "髙野さんの返信待ち"
+        }
+      ]
     },
     {
       "id": "id_rfr0atsnmsd0bu8e",
