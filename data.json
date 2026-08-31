@@ -205,7 +205,12 @@
           "desc": "カジュアル面談"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_5bvunwo2mthw08kb",
+          "text": "現在日程調整中"
+        }
+      ]
     }
   ],
   "agents": [
