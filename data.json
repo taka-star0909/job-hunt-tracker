@@ -70,7 +70,12 @@
           "desc": "二次面接"
         }
       ],
-      "tasks": []
+      "tasks": [
+        {
+          "id": "id_dsi2hi4mmtk115qp",
+          "text": "二次終了。結果待ち"
+        }
+      ]
     },
     {
       "id": "id_s2x6cdylmsd0bu8e",
